@@ -341,10 +341,71 @@ tbody tr:hover { background: var(--surface-hover); }
   transition: opacity .5s ease, transform .5s ease;
 }
 .reveal.vis { opacity: 1; transform: translateY(0); }
+/* ─── PASSWORD GATE ─── */
+#password-gate {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--bg); z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+#password-gate .gate-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 48px 44px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+#password-gate .gate-logo {
+  font-size: 22px; font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+#password-gate .gate-sub {
+  font-size: 14px; color: var(--text-tertiary);
+  margin-bottom: 28px;
+}
+#password-gate input {
+  width: 100%; padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15px; font-family: inherit;
+  outline: none; transition: border-color .2s;
+  margin-bottom: 14px;
+}
+#password-gate input:focus { border-color: var(--blue); }
+#password-gate button {
+  width: 100%; padding: 12px;
+  background: var(--blue); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  font-size: 15px; font-weight: 600;
+  font-family: inherit; cursor: pointer;
+  transition: opacity .2s;
+}
+#password-gate button:hover { opacity: .85; }
+#password-gate .gate-err {
+  color: var(--red); font-size: 13px;
+  margin-top: 10px; display: none;
+}
+#report-content { display: none; }
 </style>
 </head>
 <body>
 
+<!-- ════════════ PASSWORD GATE ════════════ -->
+<div id="password-gate">
+  <div class="gate-box">
+    <div class="gate-logo">OpenBorder</div>
+    <p class="gate-sub">February 2026 Marketing Report</p>
+    <input type="password" id="gate-pwd" placeholder="Enter password" autofocus onkeydown="if(event.key==='Enter')unlock()">
+    <button onclick="unlock()">View Report</button>
+    <p class="gate-err" id="gate-err">Incorrect password. Try again.</p>
+  </div>
+</div>
+
+<div id="report-content">
 <!-- ════════════ HEADER ════════════ -->
 <div class="wrap">
   <header class="header">
@@ -822,6 +883,22 @@ new Chart(document.getElementById('volumeChart'), {
   options: { responsive: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#f0f0f2' } }, y: { grid: { display: false }, ticks: { font: { size: 10 } } } } }
 });
 
+// Unlock function
+function unlock() {
+  const pwd = document.getElementById('gate-pwd').value;
+  if (pwd === 'febobreport') {
+    document.getElementById('password-gate').style.display = 'none';
+    document.getElementById('report-content').style.display = 'block';
+    // Re-trigger animations after reveal
+    setTimeout(() => { document.getElementById('pipelineFill').style.width = '36.6%'; }, 300);
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  } else {
+    document.getElementById('gate-err').style.display = 'block';
+    document.getElementById('gate-pwd').value = '';
+    document.getElementById('gate-pwd').focus();
+  }
+}
 </script>
+</div><!-- /report-content -->
 </body>
 </html>
